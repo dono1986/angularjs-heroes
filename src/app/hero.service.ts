@@ -9,12 +9,19 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 
 import {catchError, map, tap} from 'rxjs/operators'
 
+//The heroes web API expects a special header in HTTP save requests. That header is in the httpOptions constant defined in the HeroService.
+const httpOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+};
+
 
 
 @Injectable()
 export class HeroService {
 
   private heroesUrl = 'api/heroes'; // URL to web api; If the resource name (after the api base path) matches one of the configured collections, process that
+
+
 
   constructor(
     private http: HttpClient,
@@ -70,6 +77,12 @@ export class HeroService {
   }
 
 
+  updateHero(hero: Hero) : Observable<Hero> {
+    return this.http.post<Hero>(this.heroesUrl, hero, httpOptions).pipe(
+      tap(_ => this.log(`updated ${hero.id}`)),
+      catchError(this.handleErrors<any>('updateHero'))
 
 
+    );
+  }
 }
